@@ -1,5 +1,3 @@
-#  https://chat.openai.com/share/666fc370-90b1-4d07-b4b0-eb0f10057e11
-
 import math
 import random
 

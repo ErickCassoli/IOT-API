@@ -4,7 +4,7 @@ from django.views.decorators.csrf import csrf_exempt
 from rest_framework.parsers import JSONParser
 from .models import DadoSensor, DadosGerais, ConsumoHora
 from .serializers import DadoSensorSerializer, DadosGeraisSerializer
-from .dataprocessing import processar_dados_sensor
+from .data_processing import processar_dados_sensor
 from datetime import datetime, timedelta
 
 @csrf_exempt
