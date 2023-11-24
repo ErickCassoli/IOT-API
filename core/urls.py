@@ -1,7 +1,8 @@
-from django.contrib import admin
-from django.urls import include, path
+# urls.py
+from django.urls import path
+from hydrosonar.views import SensorDataView, ProcessedDataView
 
 urlpatterns = [
-    path('admin/', admin.site.urls),
-    path('sua_aplicacao/', include('orchestrator.urls')),
+    path('sensor-data/', SensorDataView.as_view(), name='sensor-data'),
+    path('processed-data/', ProcessedDataView.as_view(), name='processed-data'),
 ]
