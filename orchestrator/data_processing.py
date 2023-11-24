@@ -21,22 +21,35 @@ def calcular_volume(distancia_sensor_agua):
     volume = (math.pi / 3) * altura_agua * (raio_agua ** 2 + raio_agua * raio_com_tampa + raio_com_tampa ** 2)
     return volume
 
-# Função para gerar uma distância aleatória do sensor à água
-def random_decimal():
-    return random.uniform(0.1, altura_sem_tampa)  # Considerando a altura total da caixa como limite
 
-# Gerar uma distância aleatória
-distancia_sensor = random_decimal()
+leituras_sensor = [
+    0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.5, 0.75, 0.9, 1.0, 1.1, 1.2, 1.15, 1.1, 1.05, 1.0
+]
+def verificar_enchimento(leituras_sensor):
+    aumento_detectado = False
 
-# Calcular o volume de água com base na distância do sensor
-volume_agua = calcular_volume(distancia_sensor)
+    for i in range(1, len(leituras_sensor)):
+        if leituras_sensor[i] > leituras_sensor[i - 1]:
+            aumento_detectado = True
+            break  # Se detectar aumento, interrompe o loop
 
-# Converter para litros
-volume_litros = volume_agua * 1000  # Convertendo metros cúbicos para litros
+    return aumento_detectado
 
-# Calcular a porcentagem do volume em relação à capacidade máxima
-porcentagem = (volume_litros / capacidade) * 100
+def processar_dados_sensor(valor):
+    volume_agua = calcular_volume(valor)
 
-print(f"Distância do sensor à água: {distancia_sensor:.2f} metros")
-print(f"Volume de água na caixa: {volume_litros:.2f} litros")
-print(f"Porcentagem do volume: {porcentagem:.2f}%")
+    nivel_agua_litros = volume_agua * 1000  
+
+    porcentagem = (nivel_agua_litros / capacidade) * 100
+
+    identificacao_valvula = verificar_enchimento(valor)
+
+    consumo = capacidade - nivel_agua_litros
+
+    dados_json = {
+        "nivel_agua_litros": nivel_agua_litros,
+        "consumo": consumo,
+        "identificacao_valvula": identificacao_valvula
+    }
+
+    return dados_json
