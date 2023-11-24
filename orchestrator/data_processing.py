@@ -1,42 +1,56 @@
 import math
-import random
 
-# Dados da caixa d'água
-altura_sem_tampa = 0.58  # Altura sem tampa
-diametro_com_tampa = 1.24  # Diâmetro com a tampa
-diametro_sem_tampa = 1.22  # Diâmetro sem a tampa
-diametro_base = 0.95  # Diâmetro da base
-capacidade = 500  # Capacidade em litros
+# Dados do retângulo
+comprimento = 25.8  # cm
+largura = 17.8  # cm
+altura = 8.5  # cm
+capacidade_maxima_litros = 2.5  # Capacidade máxima em litros
+capacidade_maxima_cm3 = capacidade_maxima_litros * 1000  # Capacidade máxima em cm³
+altura_sensor_tampa = 3  # Altura do sensor acima da tampa
 
-# Função para calcular o volume com base na altura da água
+# Função para calcular o volume com base na altura da água no retângulo
 def calcular_volume(distancia_sensor_agua):
-    raio_com_tampa = diametro_com_tampa / 2
-    raio_sem_tampa = diametro_sem_tampa / 2
+    altura_agua = altura - (distancia_sensor_agua - altura_sensor_tampa)  # Considerando a altura da água como a diferença entre a altura total e a medida do sensor ajustada pela altura do sensor acima da tampa
 
-    altura_agua = altura_sem_tampa - (altura_sem_tampa * (distancia_sensor_agua / altura_sem_tampa))
     altura_agua = max(altura_agua, 0)  # Garantir que a altura não seja negativa
+    altura_agua = min(altura_agua, altura)  # Garantir que a altura da água não ultrapasse a altura total do retângulo
 
-    raio_agua = raio_sem_tampa * (altura_agua / altura_sem_tampa)
-
-    volume = (math.pi / 3) * altura_agua * (raio_agua ** 2 + raio_agua * raio_com_tampa + raio_com_tampa ** 2)
+    volume = comprimento * largura * altura_agua
     return volume
 
-# Função para gerar uma distância aleatória do sensor à água
-def random_decimal():
-    return random.uniform(0.1, altura_sem_tampa)  # Considerando a altura total da caixa como limite
 
-# Gerar uma distância aleatória
-distancia_sensor = random_decimal()
 
-# Calcular o volume de água com base na distância do sensor
-volume_agua = calcular_volume(distancia_sensor)
+leituras_sensor = [
+    0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.5, 0.75, 0.9, 1.0, 1.1, 1.2, 1.15, 1.1, 1.05, 1.0
+]
+def verificar_enchimento(leituras_sensor):
+    aumento_detectado = False
 
-# Converter para litros
-volume_litros = volume_agua * 1000  # Convertendo metros cúbicos para litros
+    for i in range(1, len(leituras_sensor)):
+        if leituras_sensor[i] > leituras_sensor[i - 1]:
+            aumento_detectado = True
+            break  
 
-# Calcular a porcentagem do volume em relação à capacidade máxima
-porcentagem = (volume_litros / capacidade) * 100
+    return aumento_detectado
 
-print(f"Distância do sensor à água: {distancia_sensor:.2f} metros")
-print(f"Volume de água na caixa: {volume_litros:.2f} litros")
-print(f"Porcentagem do volume: {porcentagem:.2f}%")
+
+
+def processar_dados_sensor(valor):
+    altura_sensor_agua = valor + altura_sensor_tampa  # Altura do sensor até a superfície da água
+
+    volume_agua = calcular_volume(altura_sensor_agua)
+
+    porcentagem = (volume_agua / capacidade_maxima_cm3) * 100
+
+    identificacao_valvula = valor < altura  # Verifica se a altura da água é menor que a altura total do retângulo
+
+    consumo = capacidade_maxima_cm3 - volume_agua
+
+    dados_json = {
+        "nivel_agua_cm3": volume_agua,
+        "consumo": consumo,
+        "identificacao_valvula": identificacao_valvula,
+        "Porcentagem": porcentagem
+    }
+
+    return dados_json
