@@ -1,6 +1,5 @@
-# utils.py
-from .models import SensorData
 from datetime import datetime, timedelta
+from .models import SensorData, ProcessedData
 
 # Medidas do recipiente
 comprimento_recipiente = 25.8  # cm
@@ -9,13 +8,24 @@ altura_recipiente = 8.5  # cm
 
 # Função para calcular o volume do recipiente em litros
 def calcular_volume_litros(distancia_sensor_agua):
-    # Fórmula para calcular o volume de um paralelepípedo: comprimento x largura x altura
-    volume_cm3 = comprimento_recipiente * largura_recipiente * (altura_recipiente - distancia_sensor_agua)
-    
-    # Converter volume para litros (1 litro = 1000 cm³)
+    # Calcular a altura atual da água no recipiente
+    altura_agua_atual = altura_recipiente - distancia_sensor_agua
+
+    # Calcular o volume em litros
+    volume_cm3 = comprimento_recipiente * largura_recipiente * altura_agua_atual
     volume_litros = volume_cm3 / 1000
     
     return volume_litros
+
+# Função para calcular a porcentagem do nível de água
+def calcular_porcentagem_nivel(distancia_sensor_agua):
+    # Calcular a altura atual da água no recipiente
+    altura_agua_atual = altura_recipiente - distancia_sensor_agua
+
+    # Calcular a porcentagem do nível de água
+    porcentagem_nivel = (altura_agua_atual / altura_recipiente) * 100
+    
+    return porcentagem_nivel
 
 # Função para processar os dados do sensor e atualizar o banco de dados
 def process_sensor_data():
@@ -28,36 +38,24 @@ def process_sensor_data():
     # Calcular o volume em litros
     volume_litros = calcular_volume_litros(distancia_sensor_agua)
     
-    # Calcular porcentagem de água restante no recipiente
-    porcentagem_agua = (volume_litros / (comprimento_recipiente * largura_recipiente * altura_recipiente)) * 100
+    # Calcular a porcentagem do nível de água
+    porcentagem_nivel = calcular_porcentagem_nivel(distancia_sensor_agua)
     
     # Verificar se a válvula deve estar ativa
-    valvula_ativa = porcentagem_agua <= 10
+    valvula_ativa = porcentagem_nivel <= 10
     
-    # Atualizar o modelo SensorData com os dados processados
-    ultimo_dado.volume_litros = volume_litros
-    ultimo_dado.porcentagem_agua = porcentagem_agua
-    ultimo_dado.valvula_ativa = valvula_ativa
-    ultimo_dado.save()
+    # Criar um novo objeto ProcessedData associado ao último SensorData
+    ProcessedData.objects.create(
+        sensor_data=ultimo_dado,
+        volume_litros=volume_litros,
+        porcentagem_agua=porcentagem_nivel,  # Agora armazenamos a porcentagem do nível
+        valvula_ativa=valvula_ativa
+    )
 
-# Função para obter os dados processados
-def get_processed_data():
-    # Último dado do sensor
-    ultimo_dado = SensorData.objects.latest('timestamp')
-    
-    # Retornar um dicionário com os dados processados
-    return {
-        'consumo_24h': calcular_consumo_24h(),
-        'nivel_atual': {
-            'porcentagem': ultimo_dado.porcentagem_agua,
-            'litros': ultimo_dado.volume_litros
-        },
-        'valvula_ativa': ultimo_dado.valvula_ativa
-    }
+# ... (restante do código)
 
-# Função para calcular o consumo de água em 24 horas (em porcentagem)
 def calcular_consumo_24h():
-    # Obtendo os dados dos últimos 24 horas
+   # Obtendo os dados dos últimos 24 horas
     agora = datetime.now()
     data_inicio = agora - timedelta(days=1)
     
@@ -82,3 +80,18 @@ def calcular_consumo_24h():
         hora_atual += timedelta(hours=1)
 
     return consumo_por_hora
+
+# Função para obter os dados processados
+def get_processed_data():
+    # Obter os dados processados
+    ultimo_dado_processado = ProcessedData.objects.latest('sensor_data__timestamp')
+
+    # Retornar um dicionário com os dados processados
+    return {
+        'consumo_24h': calcular_consumo_24h(),
+        'nivel_atual': {
+            'porcentagem': ultimo_dado_processado.porcentagem_agua,
+            'litros': ultimo_dado_processado.volume_litros
+        },
+        'valvula_ativa': ultimo_dado_processado.valvula_ativa
+    }
