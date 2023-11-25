@@ -54,20 +54,25 @@ a url padrão da api é localhost ou ```http://127.0.0.1:8000/```.
 Apos isso voce pode importar as Colections da pasta "postmanCollections" para o seu proprio postman para testar.
 
 ## Documentação da API
-
-### Retorna todos os alunos
-
-```http
-GET /api/alunos/
-```
-
-### Retorna um aluno específico
+### Recebe um dado do sensor
 
 ```http
-GET /api/alunos/${id}/
+POST /sensor-data/
 ```
 
-| Parâmetro | Tipo   | Descrição             |
+| Dados | Tipo   | Descrição             |
 | --------- | ------ | -------------------- |
-| `id`      | `int`  | **Obrigatório**. ID do aluno desejado |
+| `value`      | `int`  | Recebe o valor atual do sensor na hora que o endpoint é acessado, o valor é recebido como um número inteiro|
+
+### Retorna os dados do processados
+
+```http
+GET /processed-data/
+```
+| Dados | Tipo   | Descrição             |
+| --------- | ------ | -------------------- |
+| `percent` | `int`  | |
+| `liters` | `int` | -------------------- |
+| `valve_state` | `bolean` | -------------------- |
+
 

@@ -47,9 +47,9 @@ def process_sensor_data():
     # Criar um novo objeto ProcessedData associado ao último SensorData
     ProcessedData.objects.create(
         sensor_data=ultimo_dado,
-        volume_litros=volume_litros,
-        porcentagem_agua=porcentagem_nivel,  # Agora armazenamos a porcentagem do nível
-        valvula_ativa=valvula_ativa
+        volume_liters=volume_litros,
+        percent_watter=porcentagem_nivel,  # Agora armazenamos a porcentagem do nível
+        valve_state=valvula_ativa
     )
 
 # ... (restante do código)
@@ -88,10 +88,10 @@ def get_processed_data():
 
     # Retornar um dicionário com os dados processados
     return {
-        'consumo_24h': calcular_consumo_24h(),
-        'nivel_atual': {
-            'porcentagem': ultimo_dado_processado.porcentagem_agua,
-            'litros': ultimo_dado_processado.volume_litros
+        '24h_consumption': calcular_consumo_24h(),
+        'actual_level': {
+            'percent': ultimo_dado_processado.percent_watter,
+            'liters': ultimo_dado_processado.volume_liters
         },
-        'valvula_ativa': ultimo_dado_processado.valvula_ativa
+        'valve_state': ultimo_dado_processado.valve_state
     }
