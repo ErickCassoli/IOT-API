@@ -6,6 +6,9 @@ comprimento_recipiente = 25.8  # cm
 largura_recipiente = 17.8  # cm
 altura_recipiente = 8.5  # cm
 
+# Estado inicial da válvula (pode ser ajustado conforme necessário)
+valvula_ativa_inicial = False
+
 # Função para calcular o volume do recipiente em litros
 def calcular_volume_litros(distancia_sensor_agua):
     # Calcular a altura atual da água no recipiente
@@ -41,18 +44,28 @@ def process_sensor_data():
     # Calcular a porcentagem do nível de água
     porcentagem_nivel = calcular_porcentagem_nivel(distancia_sensor_agua)
     
+    # Obter o último dado processado para verificar o estado anterior da válvula
+    try:
+        ultimo_dado_processado = ProcessedData.objects.latest('sensor_data__timestamp')
+        valvula_anterior_ativa = ultimo_dado_processado.valve_state
+    except ProcessedData.DoesNotExist:
+        valvula_anterior_ativa = valvula_ativa_inicial
+
     # Verificar se a válvula deve estar ativa
-    valvula_ativa = porcentagem_nivel <= 10
-    
+    if porcentagem_nivel < 10 and not valvula_anterior_ativa:
+        valvula_ativa = True
+    elif porcentagem_nivel >= 90 and valvula_anterior_ativa:
+        valvula_ativa = False
+    else:
+        valvula_ativa = valvula_anterior_ativa
+
     # Criar um novo objeto ProcessedData associado ao último SensorData
     ProcessedData.objects.create(
         sensor_data=ultimo_dado,
         volume_liters=volume_litros,
-        percent_watter=porcentagem_nivel,  # Agora armazenamos a porcentagem do nível
+        percent_watter=porcentagem_nivel,
         valve_state=valvula_ativa
     )
-
-# ... (restante do código)
 
 def calcular_consumo_24h():
    # Obtendo os dados dos últimos 24 horas
