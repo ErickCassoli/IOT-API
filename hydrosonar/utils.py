@@ -74,7 +74,7 @@ def get_processed_data():
 
     # Retornar um dicionário com os dados processados
     return {
-        'timestamp': ultimo_dado_processado.timestamp,
+        'timestamp': ultimo_dado_processado.sensor_data.timestamp,
         'actual_level': {
             'percent': ultimo_dado_processado.percent_watter,
             'liters': ultimo_dado_processado.volume_liters
