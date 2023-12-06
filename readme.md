@@ -1,9 +1,9 @@
 
-# ActivityControl API
+# IOT API
 
-Api para controle de atividades atraves de alunos, sendo ela realizando CRUD para as 3 entidades disponiveis atraves de endpoints.
+Api para controle de nivel da agua, ela realiza algumas operações atraves de endpoints.
 
-Tarefa Realizada por: Erick Moreira Cassoli de Souza
+Tarefa Realizada por: Erick Moreira Cassoli de Souza, Rafael Mattos, Gustavo Oliveira, Felipe Camargo e Misael Willian
 ## Indice
 
 - [Funcionalidades](#funcionalidades)
