@@ -1,5 +1,6 @@
-from datetime import datetime, timedelta
+from datetime import timedelta
 from .models import SensorData, ProcessedData
+from django.utils import timezone
 
 # Medidas do recipiente
 comprimento_recipiente = 25.8  # cm
@@ -81,3 +82,21 @@ def get_processed_data():
         },
         'valve_state': ultimo_dado_processado.valve_state
     }
+    from django.utils import timezone
+
+def get_graphic_data():
+    # Obter os últimos 24 dados processados
+    dados_processados = ProcessedData.objects.filter(
+        sensor_data__timestamp__gte=timezone.now() - timedelta(hours=24)
+    ).order_by('sensor_data__timestamp')
+
+    # Criar uma lista de dicionários com os dados processados
+    dados_lista = []
+    for dado in dados_processados:
+        dados_lista.append({
+            'timestamp': dado.sensor_data.timestamp,
+            'percent': dado.percent_watter,
+            'liters': dado.volume_liters
+        })
+
+    return dados_lista

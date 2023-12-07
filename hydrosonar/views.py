@@ -3,7 +3,8 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from .models import SensorData
 from .serializer import SensorDataSerializer
-from .utils import process_sensor_data, get_processed_data
+from .utils import process_sensor_data, get_processed_data, get_graphic_data
+
 
 class SensorDataView(APIView):
     def post(self, request, format=None):
@@ -21,3 +22,11 @@ class ProcessedDataView(APIView):
 
         # Retornar os dados para o front-end em formato JSON
         return Response(processed_data)
+
+class GraphicDataView(APIView):
+    def get(self, request, format=None):
+        # Obter os dados processados para o sensor
+        graphicData = get_graphic_data()
+
+        # Retornar os dados para o front-end em formato JSON
+        return Response(graphicData)
