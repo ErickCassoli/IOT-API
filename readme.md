@@ -62,7 +62,7 @@ POST /sensor-data/
 
 | Dados | Tipo   | Descrição             |
 | --------- | ------ | -------------------- |
-| `value`      | `int`  | Recebe o valor atual do sensor na hora que o endpoint é acessado, o valor é recebido como um número decimal|
+| `value`      | `int`  | Recebe o valor atual do sensor na hora que o endpoint é acessado, o valor é recebido como um número inteiro|
 
 ### Retorna os dados do processados
 
