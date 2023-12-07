@@ -68,19 +68,16 @@ def process_sensor_data():
     )
 
 # Função para obter os dados processados
-def get_all_processed_data():
-    # Obter todos os dados processados ordenados por timestamp do SensorData
-    all_processed_data = ProcessedData.objects.order_by('sensor_data__timestamp')
+def get_processed_data():
+    # Obter os dados processados
+    ultimo_dado_processado = ProcessedData.objects.latest('sensor_data__timestamp')
 
-    # Serializar os dados para retornar no formato desejado (JSON)
-    processed_data_list = []
-    for processed_data in all_processed_data:
-        data_entry = {
-            'timestamp': processed_data.sensor_data.timestamp,
-            'percent': processed_data.percent_watter,
-            'liters': processed_data.volume_liters,
-            'valve_state': processed_data.valve_state
-        }
-        processed_data_list.append(data_entry)
-
-    return processed_data_list
+    # Retornar um dicionário com os dados processados
+    return {
+        'timestamp': ultimo_dado_processado.sensor_data.timestamp,
+        'actual_level': {
+            'percent': ultimo_dado_processado.percent_watter,
+            'liters': ultimo_dado_processado.volume_liters
+        },
+        'valve_state': ultimo_dado_processado.valve_state
+    }
