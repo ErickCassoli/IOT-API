@@ -1,9 +1,9 @@
 
-# ActivityControl API
+# IOT API
 
-Api para controle de atividades atraves de alunos, sendo ela realizando CRUD para as 3 entidades disponiveis atraves de endpoints.
+Api para controle de nivel da agua, ela realiza algumas operações atraves de endpoints.
 
-Tarefa Realizada por: Erick Moreira Cassoli de Souza
+Tarefa Realizada por: Erick Moreira Cassoli de Souza, Rafael Mattos, Gustavo Oliveira, Felipe Camargo e Misael Willian
 ## Indice
 
 - [Funcionalidades](#funcionalidades)
@@ -62,7 +62,7 @@ POST /sensor-data/
 
 | Dados | Tipo   | Descrição             |
 | --------- | ------ | -------------------- |
-| `value`      | `int`  | Recebe o valor atual do sensor na hora que o endpoint é acessado, o valor é recebido como um número inteiro|
+| `value`      | `int`  | Recebe o valor atual do sensor na hora que o endpoint é acessado, o valor é recebido como um número decimal|
 
 ### Retorna os dados do processados
 
@@ -71,8 +71,7 @@ GET /processed-data/
 ```
 | Dados | Tipo   | Descrição             |
 | --------- | ------ | -------------------- |
-| `percent` | `int`  | |
+| `percent` | `int`  | -------------------- |
 | `liters` | `int` | -------------------- |
 | `valve_state` | `bolean` | -------------------- |
-
 
