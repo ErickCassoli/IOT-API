@@ -1,7 +1,5 @@
-from datetime import timedelta
 from .models import SensorData, ProcessedData
-from django.utils import timezone
-from django.db.models import F
+
 # Medidas do recipiente
 comprimento_recipiente = 25.8  # cm
 largura_recipiente = 17.8  # cm
@@ -88,17 +86,12 @@ def get_processed_data():
 from django.db.models import F
 
 def get_graphic_data():
-    # Obter os últimos 12 dados processados ordenados por timestamp em ordem decrescente
-    ultimos_dados_processados = ProcessedData.objects.order_by('-sensor_data__timestamp')[:24]
+    
+    ultimo_dado_processado = ProcessedData.objects.latest('sensor_data__timestamp')
 
-    # Criar uma lista de dicionários com os dados processados
-    dados_processados = []
-    for dado_processado in ultimos_dados_processados:
-        dados_processados.append({
-            'timestamp': dado_processado.sensor_data.timestamp,
-            'percent': dado_processado.percent_watter,
-            'liters': dado_processado.volume_liters
-        })
-
-    return dados_processados
-
+    # Retornar um dicionário com os dados processados
+    return {
+        'timestamp': ultimo_dado_processado.sensor_data.timestamp,
+        'percent': ultimo_dado_processado.percent_watter,
+        'liters': ultimo_dado_processado.volume_liters
+    }
