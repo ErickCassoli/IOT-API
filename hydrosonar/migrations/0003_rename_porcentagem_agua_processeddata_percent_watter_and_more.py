@@ -13,7 +13,7 @@ class Migration(migrations.Migration):
         migrations.RenameField(
             model_name='processeddata',
             old_name='porcentagem_agua',
-            new_name='percent_watter',
+            new_name='percent_water',
         ),
         migrations.RenameField(
             model_name='processeddata',
